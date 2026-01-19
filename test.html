@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Animation Player - Manual Loading Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    
+    .demo-container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 900px;
+      width: 100%;
+    }
+    
+    h1 {
+      font-size: 32px;
+      color: #1a202c;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    
+    .subtitle {
+      color: #718096;
+      margin-bottom: 32px;
+      font-size: 16px;
+    }
+    
+    .svg-animation-container {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #f7fafc;
+      border: 2px dashed #cbd5e0;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    
+    button {
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #2d3748;
+    }
+    
+    .btn-success {
+      background: #48bb78;
+      color: white;
+    }
+    
+    .btn-warning {
+      background: #ed8936;
+      color: white;
+    }
+    
+    .status {
+      padding: 16px;
+      background: #edf2f7;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      margin-bottom: 20px;
+    }
+    
+    .status-label {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 4px;
+    }
+    
+    .status-value {
+      color: #718096;
+      font-family: "SF Mono", monospace;
+      font-size: 14px;
+    }
+    
+    .info-box {
+      background: #ebf8ff;
+      border: 1px solid #90cdf4;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+    
+    .info-box h3 {
+      color: #2c5282;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    
+    .info-box p {
+      color: #2d3748;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .info-box code {
+      background: #bee3f8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: "SF Mono", monospace;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <h1>🎬 SVG Animation Player v2</h1>
+    <p class="subtitle">Manual loading control with GSAP progress indicator</p>
+    
+    <div class="status">
+      <div class="status-label">Player Status:</div>
+      <div class="status-value" id="status">Not initialized</div>
+    </div>
+    
+    <div 
+      class="svg-animation-container" 
+      data-id="myAnimation"
+      data-base-path="assets/math_research/group_theory/SO_square"
+    ></div>
+    
+    <div class="controls">
+      <button class="btn-primary" onclick="initPlayer()">🚀 Initialize Player</button>
+      <button class="btn-success" onclick="playAnimation()">▶️ Play</button>
+      <button class="btn-warning" onclick="pauseAnimation()">⏸️ Pause</button>
+      <button class="btn-secondary" onclick="showFirstFrame()">⏮️ First Frame</button>
+      <button class="btn-secondary" onclick="gotoRandomFrame()">🎲 Random Frame</button>
+    </div>
+    
+    <div class="info-box">
+      <h3>💡 How to Use</h3>
+      <p>
+        <strong>1. Click "Initialize Player"</strong> to start loading the animation. 
+        You'll see a beautiful GSAP-powered loading indicator with a progress circle.
+      </p>
+      <p style="margin-top: 8px;">
+        <strong>2. Once loaded,</strong> use the play/pause controls to interact with the animation.
+      </p>
+      <p style="margin-top: 12px;">
+        <strong>Code example:</strong><br>
+        <code>const player = window.SVGPlayers['myAnimation'];</code><br>
+        <code>await player.init(); // Load the animation</code><br>
+        <code>player.play(); // Start playing</code>
+      </p>
+    </div>
+  </div>
+  
+  <script>
+    const statusEl = document.getElementById('status');
+    let player = null;
+    
+    function updateStatus(message) {
+      statusEl.textContent = message;
+    }
+    
+    async function initPlayer() {
+      if (!window.SVGPlayers['myAnimation']) {
+        updateStatus('❌ Player not registered');
+        return;
+      }
+      
+      player = window.SVGPlayers['myAnimation'];
+      
+      if (player.initialized) {
+        updateStatus('✅ Already initialized');
+        return;
+      }
+      
+      updateStatus('⏳ Loading animation...');
+      
+      try {
+        await player.init();
+        updateStatus('✅ Ready to play!');
+      } catch (err) {
+        updateStatus(`❌ Error: ${err.message}`);
+        console.error(err);
+      }
+    }
+    
+    function playAnimation() {
+      if (!player?.initialized) {
+        updateStatus('⚠️ Please initialize first');
+        return;
+      }
+      player.play();
+      updateStatus('▶️ Playing...');
+    }
+    
+    function pauseAnimation() {
+      if (!player?.initialized) {
+        updateStatus('⚠️ Please initialize first');
+        return;
+      }
+      player.pause();
+      updateStatus('⏸️ Paused');
+    }
+    
+    function showFirstFrame() {
+      if (!player?.initialized) {
+        updateStatus('⚠️ Please initialize first');
+        return;
+      }
+      player.showFirstFrame();
+      updateStatus('⏮️ Showing first frame');
+    }
+    
+    function gotoRandomFrame() {
+      if (!player?.initialized) {
+        updateStatus('⚠️ Please initialize first');
+        return;
+      }
+      // This is just an example - you'd need to know your frame numbers
+      const randomFrame = Math.floor(Math.random() * 100);
+      player.gotoFrame(randomFrame);
+      updateStatus(`🎲 Jumped to frame ${randomFrame}`);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+main:
+  - title: "About"
+    url: "/"
+  - title: "Math Research"
+    url: math-research
+  - title: "Math Teaching"
+    url: math-teaching

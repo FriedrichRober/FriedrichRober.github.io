@@ -1,0 +1,3 @@
+function defaultInit(){
+    curtainAnimation.init();
+}

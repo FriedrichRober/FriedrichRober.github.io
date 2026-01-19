@@ -1,0 +1,51 @@
+<style>
+  /* These settings are for view transition API */
+  @view-transition { navigation: auto }
+
+  .masthead {
+    view-transition-name: masthead;
+  }
+
+  article.page {
+    view-transition-name: page-content;
+  }
+
+  .footer.sticky {
+    view-transition-name: footer;
+  }
+
+  .sidebar {
+    view-transition-name: sidebar;
+  }
+
+  /* These settings are for entering transitions only*/
+  html[data-transition-context="internal"][data-transition-from="main"][data-transition-to="main"]
+    .page__title {
+    opacity: 0;
+    visibility: hidden;
+  }
+  html[data-transition-context="internal"][data-transition-from="main"][data-transition-to="main"]
+    .page__content {
+    opacity: 0;
+    visibility: hidden;
+  }
+  html[data-transition-context="internal"][data-transition-from="main"][data-transition-to="main"]
+    .footer.sticky {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  html[data-transition-context="internal"][data-transition-from="slides"][data-transition-to="main"]
+    .sidebar {
+      view-transition-name: none;
+  }
+  html[data-transition-context="internal"][data-transition-from="slides"][data-transition-to="main"]
+    .page {
+      view-transition-name: none;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*){
+    animation: none;
+  }
+</style>
