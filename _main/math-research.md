@@ -30,7 +30,7 @@ Collaboration is key in research, and a very important aspect for establishing c
 
 You can also download a
 <a href="{{ site.baseurl }}/assets/pdfs/friedrich-rober-research-presentation.pdf" download>
-  PDF presentation obout my research.
+  PDF presentation about my research.
 </a>
 In order to see the animations, you need a PDF viewer that is capable of displaying MP4 files, for example Adobe Acrobat Reader.
 
